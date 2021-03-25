@@ -12,7 +12,7 @@ func main() {
 	pathPtr := flag.String("path", "", "path to the protected Document")
 	flag.Parse()
 	path := *pathPtr
-	pl := getPl.GetPublishingLicense(path)
+	getPl.GetPublishingLicense(path)
 	mainLog.Println("PublishingLicense")
-	mainLog.Println(pl)
+
 }
