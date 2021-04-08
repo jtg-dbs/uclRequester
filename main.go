@@ -4,6 +4,7 @@ import (
 	"flag"
 	"log"
 	"os"
+	"uclRequester/getGic"
 	"uclRequester/getPl"
 )
 
@@ -15,5 +16,6 @@ func main() {
 	mrl, clc := getPl.GetPublishingLicense(path)
 	mainLog.Println(mrl[:50])
 	mainLog.Println(clc[:50])
-
+	gic := getGic.GetGicCert()
+	mainLog.Print(gic[:50])
 }
