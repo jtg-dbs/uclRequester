@@ -1,14 +1,14 @@
 package getPl
 
 import (
-	"encoding/xml"
 	"log"
 	"os"
 	"strings"
 
+	"github.com/antchfx/xmlquery"
 	"github.com/richardlehane/mscfb"
 )
-// GetPublishingLicense retrieves the path to a protected document and response with the PL of this
+
 func GetPublishingLicense(path string) (string, string) {
 	getPlLog := log.New(os.Stdout, "GetPublishingLicense: ", log.Ldate|log.Ltime|log.Lshortfile)
 	file, err := os.Open(path)
@@ -49,9 +49,24 @@ func cleanXml(xmlByte []byte, getPlLog *log.Logger) (string, string) {
 	// get ride of the text before the xml
 	xmlStr := string(xmlByte)
 	index := strings.Index(xmlStr, "<")
-	xmlDoc := xmlStr[index:]
-	clcXmlDoc := xmlStr[index:]
-	
+	xmlDoc := addRootElement(xmlStr[index:])
+	getPlLog.Print(xmlDoc)
+	publishingLicense, err := xmlquery.Parse(strings.NewReader(xmlDoc))
+	if err != nil {
+		getPlLog.Fatal(err)
+	}
+	mrLabelPl := xmlquery.FindOne(publishingLicense, "//BODY")
+	getPlLog.Print(mrLabelPl)
+	clcPl := xmlquery.FindOne(publishingLicense, "//BODY")
+	getPlLog.Print(clcPl)
 
-	return string(mrLabelPl), string(clcPl)
+	return mrLabelPl.Data, clcPl.Data
+}
+
+// add a root element in the PL for a well formed XML
+func addRootElement(xmlStr string) string {
+	index := strings.Index(xmlStr, "?>") + 2
+	wellFormedXml := xmlStr[:index] + "<root>" + xmlStr[index:] + "</root>"
+
+	return wellFormedXml
 }
