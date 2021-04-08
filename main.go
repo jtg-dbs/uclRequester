@@ -12,7 +12,11 @@ func main() {
 	pathPtr := flag.String("path", "", "path to the protected Document")
 	flag.Parse()
 	path := *pathPtr
-	getPl.GetPublishingLicense(path)
+	mrl, clc := getPl.GetPublishingLicense(path)
+	mainLog.Println("Microsoft Rights Label")
+	mainLog.Print(mrl)
+	mainLog.Println("Client Licensor Certificate")
+	mainLog.Println(clc)
 	mainLog.Println("PublishingLicense")
 
 }

@@ -10,12 +10,11 @@ import (
 )
 
 // created with https://www.onlinetool.io/xmltogo/
-type XrML struct {
+type ClientLicensorCertificateXrML struct {
 	XMLName xml.Name `xml:"XrML"`
 	Text    string   `xml:",chardata"`
-	Version string   `xml:"version,attr"`
 	Xmlns   string   `xml:"xmlns,attr"`
-	Purpose string   `xml:"purpose,attr"`
+	Version string   `xml:"version,attr"`
 	BODY    struct {
 		Text       string `xml:",chardata"`
 		Type       string `xml:"type,attr"`
@@ -30,7 +29,6 @@ type XrML struct {
 					Text string `xml:",chardata"`
 					Type string `xml:"type,attr"`
 				} `xml:"ID"`
-				NAME string `xml:"NAME"`
 			} `xml:"OBJECT"`
 		} `xml:"DESCRIPTOR"`
 		ISSUER struct {
@@ -62,6 +60,180 @@ type XrML struct {
 				} `xml:"PARAMETER"`
 			} `xml:"PUBLICKEY"`
 			SECURITYLEVEL []struct {
+				Text  string `xml:",chardata"`
+				Name  string `xml:"name,attr"`
+				Value string `xml:"value,attr"`
+			} `xml:"SECURITYLEVEL"`
+		} `xml:"ISSUER"`
+		DISTRIBUTIONPOINT struct {
+			Text   string `xml:",chardata"`
+			OBJECT struct {
+				Text string `xml:",chardata"`
+				Type string `xml:"type,attr"`
+				ID   struct {
+					Text string `xml:",chardata"`
+					Type string `xml:"type,attr"`
+				} `xml:"ID"`
+				NAME    string `xml:"NAME"`
+				ADDRESS struct {
+					Text string `xml:",chardata"`
+					Type string `xml:"type,attr"`
+				} `xml:"ADDRESS"`
+			} `xml:"OBJECT"`
+		} `xml:"DISTRIBUTIONPOINT"`
+		ISSUEDPRINCIPALS struct {
+			Text      string `xml:",chardata"`
+			PRINCIPAL struct {
+				Text       string `xml:",chardata"`
+				InternalID string `xml:"internal-id,attr"`
+				OBJECT     struct {
+					Text string `xml:",chardata"`
+					Type string `xml:"type,attr"`
+					ID   struct {
+						Text string `xml:",chardata"`
+						Type string `xml:"type,attr"`
+					} `xml:"ID"`
+					NAME string `xml:"NAME"`
+				} `xml:"OBJECT"`
+				PUBLICKEY struct {
+					Text      string `xml:",chardata"`
+					ALGORITHM string `xml:"ALGORITHM"`
+					PARAMETER []struct {
+						Text  string `xml:",chardata"`
+						Name  string `xml:"name,attr"`
+						VALUE struct {
+							Text     string `xml:",chardata"`
+							Encoding string `xml:"encoding,attr"`
+							Size     string `xml:"size,attr"`
+						} `xml:"VALUE"`
+					} `xml:"PARAMETER"`
+				} `xml:"PUBLICKEY"`
+			} `xml:"PRINCIPAL"`
+		} `xml:"ISSUEDPRINCIPALS"`
+		WORK struct {
+			Text   string `xml:",chardata"`
+			OBJECT struct {
+				Text string `xml:",chardata"`
+				Type string `xml:"type,attr"`
+				ID   struct {
+					Text string `xml:",chardata"`
+					Type string `xml:"type,attr"`
+				} `xml:"ID"`
+			} `xml:"OBJECT"`
+			RIGHTSGROUP struct {
+				Text       string `xml:",chardata"`
+				Name       string `xml:"name,attr"`
+				RIGHTSLIST struct {
+					Text  string `xml:",chardata"`
+					RIGHT struct {
+						Text          string `xml:",chardata"`
+						Name          string `xml:"name,attr"`
+						CONDITIONLIST struct {
+							Text string `xml:",chardata"`
+							TIME struct {
+								Text      string `xml:",chardata"`
+								RANGETIME struct {
+									Text  string `xml:",chardata"`
+									FROM  string `xml:"FROM"`
+									UNTIL string `xml:"UNTIL"`
+								} `xml:"RANGETIME"`
+							} `xml:"TIME"`
+							ACCESS struct {
+								Text      string `xml:",chardata"`
+								PRINCIPAL struct {
+									Text         string `xml:",chardata"`
+									InternalID   string `xml:"internal-id,attr"`
+									ENABLINGBITS struct {
+										Text  string `xml:",chardata"`
+										Type  string `xml:"type,attr"`
+										VALUE struct {
+											Text     string `xml:",chardata"`
+											Encoding string `xml:"encoding,attr"`
+											Size     string `xml:"size,attr"`
+										} `xml:"VALUE"`
+									} `xml:"ENABLINGBITS"`
+								} `xml:"PRINCIPAL"`
+							} `xml:"ACCESS"`
+						} `xml:"CONDITIONLIST"`
+					} `xml:"RIGHT"`
+				} `xml:"RIGHTSLIST"`
+			} `xml:"RIGHTSGROUP"`
+		} `xml:"WORK"`
+	} `xml:"BODY"`
+	SIGNATURE struct {
+		Text   string `xml:",chardata"`
+		DIGEST struct {
+			Text      string `xml:",chardata"`
+			ALGORITHM string `xml:"ALGORITHM"`
+			PARAMETER struct {
+				Text  string `xml:",chardata"`
+				Name  string `xml:"name,attr"`
+				VALUE struct {
+					Text     string `xml:",chardata"`
+					Encoding string `xml:"encoding,attr"`
+				} `xml:"VALUE"`
+			} `xml:"PARAMETER"`
+			VALUE struct {
+				Text     string `xml:",chardata"`
+				Encoding string `xml:"encoding,attr"`
+				Size     string `xml:"size,attr"`
+			} `xml:"VALUE"`
+		} `xml:"DIGEST"`
+		ALGORITHM string `xml:"ALGORITHM"`
+		VALUE     struct {
+			Text     string `xml:",chardata"`
+			Encoding string `xml:"encoding,attr"`
+			Size     string `xml:"size,attr"`
+		} `xml:"VALUE"`
+	} `xml:"SIGNATURE"`
+}
+
+type MicrosoftRightsLabelXrML struct {
+	XMLName xml.Name `xml:"XrML"`
+	Text    string   `xml:",chardata"`
+	Version string   `xml:"version,attr"`
+	Xmlns   string   `xml:"xmlns,attr"`
+	BODY    struct {
+		Text       string `xml:",chardata"`
+		Type       string `xml:"type,attr"`
+		Version    string `xml:"version,attr"`
+		ISSUEDTIME string `xml:"ISSUEDTIME"`
+		DESCRIPTOR struct {
+			Text   string `xml:",chardata"`
+			OBJECT struct {
+				Text string `xml:",chardata"`
+				ID   struct {
+					Text string `xml:",chardata"`
+					Type string `xml:"type,attr"`
+				} `xml:"ID"`
+				NAME string `xml:"NAME"`
+			} `xml:"OBJECT"`
+		} `xml:"DESCRIPTOR"`
+		ISSUER struct {
+			Text   string `xml:",chardata"`
+			OBJECT struct {
+				Text string `xml:",chardata"`
+				Type string `xml:"type,attr"`
+				ID   struct {
+					Text string `xml:",chardata"`
+					Type string `xml:"type,attr"`
+				} `xml:"ID"`
+				NAME string `xml:"NAME"`
+			} `xml:"OBJECT"`
+			PUBLICKEY struct {
+				Text      string `xml:",chardata"`
+				ALGORITHM string `xml:"ALGORITHM"`
+				PARAMETER []struct {
+					Text  string `xml:",chardata"`
+					Name  string `xml:"name,attr"`
+					VALUE struct {
+						Text     string `xml:",chardata"`
+						Encoding string `xml:"encoding,attr"`
+						Size     string `xml:"size,attr"`
+					} `xml:"VALUE"`
+				} `xml:"PARAMETER"`
+			} `xml:"PUBLICKEY"`
+			SECURITYLEVEL struct {
 				Text  string `xml:",chardata"`
 				Name  string `xml:"name,attr"`
 				Value string `xml:"value,attr"`
@@ -134,7 +306,6 @@ type XrML struct {
 			Text   string `xml:",chardata"`
 			OBJECT struct {
 				Text string `xml:",chardata"`
-				Type string `xml:"type,attr"`
 				ID   struct {
 					Text string `xml:",chardata"`
 					Type string `xml:"type,attr"`
@@ -154,65 +325,10 @@ type XrML struct {
 					} `xml:"OBJECT"`
 				} `xml:"OWNER"`
 			} `xml:"METADATA"`
-			RIGHTSGROUP struct {
-				Text       string `xml:",chardata"`
-				Name       string `xml:"name,attr"`
-				RIGHTSLIST struct {
-					Text  string `xml:",chardata"`
-					RIGHT struct {
-						Text          string `xml:",chardata"`
-						Name          string `xml:"name,attr"`
-						CONDITIONLIST struct {
-							Text string `xml:",chardata"`
-							TIME struct {
-								Text      string `xml:",chardata"`
-								RANGETIME struct {
-									Text  string `xml:",chardata"`
-									FROM  string `xml:"FROM"`
-									UNTIL string `xml:"UNTIL"`
-								} `xml:"RANGETIME"`
-							} `xml:"TIME"`
-							ACCESS struct {
-								Text      string `xml:",chardata"`
-								PRINCIPAL struct {
-									Text         string `xml:",chardata"`
-									InternalID   string `xml:"internal-id,attr"`
-									ENABLINGBITS struct {
-										Text  string `xml:",chardata"`
-										Type  string `xml:"type,attr"`
-										VALUE struct {
-											Text     string `xml:",chardata"`
-											Encoding string `xml:"encoding,attr"`
-											Size     string `xml:"size,attr"`
-										} `xml:"VALUE"`
-									} `xml:"ENABLINGBITS"`
-								} `xml:"PRINCIPAL"`
-							} `xml:"ACCESS"`
-						} `xml:"CONDITIONLIST"`
-						ACCESS struct {
-							Text      string `xml:",chardata"`
-							PRINCIPAL struct {
-								Text         string `xml:",chardata"`
-								InternalID   string `xml:"internal-id,attr"`
-								ENABLINGBITS struct {
-									Text  string `xml:",chardata"`
-									Type  string `xml:"type,attr"`
-									VALUE struct {
-										Text     string `xml:",chardata"`
-										Encoding string `xml:"encoding,attr"`
-										Size     string `xml:"size,attr"`
-									} `xml:"VALUE"`
-								} `xml:"ENABLINGBITS"`
-							} `xml:"PRINCIPAL"`
-						} `xml:"ACCESS"`
-					} `xml:"RIGHT"`
-				} `xml:"RIGHTSLIST"`
-			} `xml:"RIGHTSGROUP"`
 		} `xml:"WORK"`
-		AUTHENTICATEDDATA []struct {
+		AUTHENTICATEDDATA struct {
 			Text string `xml:",chardata"`
 			ID   string `xml:"id,attr"`
-			Name string `xml:"name,attr"`
 		} `xml:"AUTHENTICATEDDATA"`
 	} `xml:"BODY"`
 	SIGNATURE struct {
@@ -244,7 +360,7 @@ type XrML struct {
 }
 
 // GetPublishingLicense retrieves the path to a protected document and response with the PL of this
-func GetPublishingLicense(path string) string {
+func GetPublishingLicense(path string) (string, string) {
 	getPlLog := log.New(os.Stdout, "GetPublishingLicense: ", log.Ldate|log.Ltime|log.Lshortfile)
 	file, err := os.Open(path)
 	// defer let this function proced when GetPublishingLicense is finished
@@ -276,23 +392,41 @@ func GetPublishingLicense(path string) string {
 	}
 
 	return cleanXml(pl, getPlLog)
+
 }
 
 //cleanXml In the PL there is are some type of text before the xml.´
-func cleanXml(xmlByte []byte, getPlLog *log.Logger) string {
+func cleanXml(xmlByte []byte, getPlLog *log.Logger) (string, string) {
 	// get ride of the text before the xml
 	xmlStr := string(xmlByte)
 	index := strings.Index(xmlStr, "<")
-	xmlDoc := xmlStr[index:]
-	// encode the string as an xml
-	var xrml XrML
-	err := xml.Unmarshal([]byte(xmlDoc), &xrml)
+	mrlXmlDoc := xmlStr[index:]
+	clcXmlDoc := xmlStr[index:]
+	// MicrosoftRightsLabel Part of the XML
+	var mrLabel MicrosoftRightsLabelXrML
+	err := xml.Unmarshal([]byte(mrlXmlDoc), &mrLabel)
 	if err != nil {
+		getPlLog.Print("Read of the MicrosoftRightsLabelXrML")
 		getPlLog.Fatal(err)
 	}
-	xmlPl, err := xml.Marshal(&xrml)
+	mrLabelPl, err := xml.Marshal(&mrLabel)
 	if err != nil {
+		getPlLog.Print("Transform of the MicrosoftRightsLabelXrML")
 		getPlLog.Fatal(err)
 	}
-	return string(xmlPl)
+
+	// Client Licensor Certificate Part of the XML
+	var clc ClientLicensorCertificateXrML
+	err = xml.Unmarshal([]byte(clcXmlDoc), &clc)
+	if err != nil {
+		getPlLog.Print("Read of the ClientLicensorCertificateXrML")
+		getPlLog.Fatal(err)
+	}
+	clcPl, err := xml.Marshal(&clc)
+	if err != nil {
+		getPlLog.Print("Transform of the ClientLicensorCertificateXrML")
+		getPlLog.Fatal(err)
+	}
+
+	return string(mrLabelPl), string(clcPl)
 }
