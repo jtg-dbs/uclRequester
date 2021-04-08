@@ -59,7 +59,7 @@ func cleanXml(xmlByte []byte, getPlLog *log.Logger) (string, string) {
 	clcPl := xmlquery.FindOne(publishingLicense, "//BODY")
 	getPlLog.Print(clcPl)
 
-	return rLabelPl.OutputXML(true), clcPl.Data
+	return mrLabelPl.OutputXML(true), clcPl.Data
 }
 
 // add a root element in the PL for a well formed XML
