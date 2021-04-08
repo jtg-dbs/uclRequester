@@ -50,17 +50,16 @@ func cleanXml(xmlByte []byte, getPlLog *log.Logger) (string, string) {
 	xmlStr := string(xmlByte)
 	index := strings.Index(xmlStr, "<")
 	xmlDoc := addRootElement(xmlStr[index:])
-	getPlLog.Print(xmlDoc)
 	publishingLicense, err := xmlquery.Parse(strings.NewReader(xmlDoc))
 	if err != nil {
 		getPlLog.Fatal(err)
 	}
-	mrLabelPl := xmlquery.FindOne(publishingLicense, "//BODY")
-	getPlLog.Print(mrLabelPl)
+	mrLabelPl := xmlquery.FindOne(publishingLicense, `//BODY[@type="Microsoft Rights Label"]`)
+	getPlLog.Print(mrLabelPl.OutputXML(true))
 	clcPl := xmlquery.FindOne(publishingLicense, "//BODY")
 	getPlLog.Print(clcPl)
 
-	return mrLabelPl.Data, clcPl.Data
+	return rLabelPl.OutputXML(true), clcPl.Data
 }
 
 // add a root element in the PL for a well formed XML
