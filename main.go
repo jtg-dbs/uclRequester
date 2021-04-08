@@ -13,10 +13,7 @@ func main() {
 	flag.Parse()
 	path := *pathPtr
 	mrl, clc := getPl.GetPublishingLicense(path)
-	mainLog.Println("Microsoft Rights Label")
-	mainLog.Print(mrl)
-	mainLog.Println("Client Licensor Certificate")
-	mainLog.Println(clc)
-	mainLog.Println("PublishingLicense")
+	mainLog.Println(mrl[:50])
+	mainLog.Println(clc[:50])
 
 }

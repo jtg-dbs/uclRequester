@@ -9,7 +9,7 @@ import (
 	"github.com/richardlehane/mscfb"
 )
 
-func GetPublishingLicense(path string) (string, string) {
+func GetPublishingLicense(path string) (MicrosoftRightsLabel string, ClienLicensorCertificate string) {
 	getPlLog := log.New(os.Stdout, "GetPublishingLicense: ", log.Ldate|log.Ltime|log.Lshortfile)
 	file, err := os.Open(path)
 	// defer let this function proced when GetPublishingLicense is finished
@@ -40,12 +40,14 @@ func GetPublishingLicense(path string) (string, string) {
 		}
 	}
 
-	return cleanXml(pl, getPlLog)
+	return getMrlClc(pl, getPlLog)
 
 }
 
-//cleanXml In the PL there is are some type of text before the xml.´
-func cleanXml(xmlByte []byte, getPlLog *log.Logger) (string, string) {
+//cleanXml In the PL there is are some type of text before the xml. Furhtermore the needed Elements get extracted
+func getMrlClc(xmlByte []byte, getPlLog *log.Logger) (MicrosoftRightsLabel string, ClienLicensorCertificate string) {
+	var mrl xmlquery.Node
+	var clc xmlquery.Node
 	// get ride of the text before the xml
 	xmlStr := string(xmlByte)
 	index := strings.Index(xmlStr, "<")
@@ -54,12 +56,20 @@ func cleanXml(xmlByte []byte, getPlLog *log.Logger) (string, string) {
 	if err != nil {
 		getPlLog.Fatal(err)
 	}
-	mrLabelPl := xmlquery.FindOne(publishingLicense, `//BODY[@type="Microsoft Rights Label"]`)
-	getPlLog.Print(mrLabelPl.OutputXML(true))
-	clcPl := xmlquery.FindOne(publishingLicense, "//BODY")
-	getPlLog.Print(clcPl)
+	// extract Microsoft Right Label and Client Licensor Certificate from the Pl
+	xrmlArr := xmlquery.Find(publishingLicense, `//XrML`)
+	for _, node := range xrmlArr {
+		if xmlquery.FindOne(node, `//BODY[@type="Microsoft Rights Label"]`) != nil {
+			mrl = *node
+			getPlLog.Print("Microsoft Rights Label found")
+		}
+		if xmlquery.FindOne(node, `//BODY/DESCRIPTOR/OBJECT[@type="Client-Licensor-Certificate"]`) != nil {
+			clc = *node
+			getPlLog.Print("Client-Licensor-Certificate found")
+		}
+	}
 
-	return mrLabelPl.OutputXML(true), clcPl.Data
+	return mrl.OutputXML(true), clc.OutputXML(true)
 }
 
 // add a root element in the PL for a well formed XML
