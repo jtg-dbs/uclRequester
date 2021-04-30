@@ -15,6 +15,13 @@ import (
 // UclSoapRequest creates the SOAP Request for the Ucl endpoint. Authentication is done by this function
 func UclSoapRequest(mrl string, clc string, gic string) {
 	uclSoapRequestLog := log.New(os.Stdout, "UclSoapRequest: ", log.Ldate|log.Ltime|log.Lshortfile)
+	winVersion := getWinVersion(uclSoapRequestLog)
+	headers := map[string]string{
+		"User-Agent":      "MSIPC;version=1.0.4349.3;AppName=WINWORD.EXE;AppVersion=16.0.13801.20294;AppArch=x86;OSName=Windows;OSVersion=" + winVersion + ";OSArch=amd64",
+		"Content-Type":    "text/xml; charset=utf-8",
+		"Accept-Encoding": "gzip, deflate",
+		"SOAPAction":      `"http://microsoft.com/DRM/LicensingService/AcquireLicense"`,
+	}
 	soapClient := &http.Client{
 		Transport: &spnego.Transport{},
 	}
@@ -22,11 +29,9 @@ func UclSoapRequest(mrl string, clc string, gic string) {
 	url := getUrl(gic, uclSoapRequestLog) + "/licensing/License.amx"
 	uclSoapRequestLog.Print(url)
 	soapRequest, err := http.NewRequest("POST", url, nil) // XML Document has to be in body
-	winVersion := getWinVersion(uclSoapRequestLog)
-	soapRequest.Header.Set("User-Agent", "MSIPC;version=1.0.4349.3;AppName=WINWORD.EXE;AppVersion=16.0.13801.20294;AppArch=x86;OSName=Windows;OSVersion="+winVersion+";OSArch=amd64")
-	soapRequest.Header.Set("Content-Type", "text/xml; charset=utf-8")
-	soapRequest.Header.Set("Accept-Encoding", "grzip, deflate")
-	soapRequest.Header.Set("SOAPAction", `"http://microsoft.com/DRM/LicensingService/AcquireLicense"`)
+	for key, value := range headers {
+		soapRequest.Header.Set(key, value)
+	}
 	if err != nil {
 		uclSoapRequestLog.Fatal(err)
 	}
