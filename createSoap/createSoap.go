@@ -25,6 +25,9 @@ func UclSoapRequest(mrl string, clc string, gic string) {
 		"SOAPAction":      `"http://microsoft.com/DRM/LicensingService/AcquireLicense"`,
 		"Accept":          "*/*",
 		"Connection":      "Keep-Alive",
+		// both ids are necessary but can be recycled every time, could be a problem for Detection with a SIEM
+		"rmsocorrelationid": "{9DE381BF-2552-4713-8CF4-A43B548F2A05}",
+		"rmsoscenarioid":    "{F966E37B-14B2-4E85-8E3B-3870C0B51242}",
 	}
 	soapClient := &http.Client{
 		Transport: &spnego.Transport{},
@@ -35,7 +38,6 @@ func UclSoapRequest(mrl string, clc string, gic string) {
 		uclSoapRequestLog.Print(err)
 	}
 	bodyFilled := insertContent(mrl, clc, gic, string(body))
-	uclSoapRequestLog.Print(bodyFilled)
 	url := getUrl(gic, uclSoapRequestLog) + "/licensing/License.asmx"
 	uclSoapRequestLog.Print(url)
 	soapRequest, err := http.NewRequest("POST", url, bytes.NewReader([]byte(bodyFilled))) // XML Document has to be in body
@@ -46,7 +48,10 @@ func UclSoapRequest(mrl string, clc string, gic string) {
 		uclSoapRequestLog.Fatal(err)
 	}
 	resp, err := soapClient.Do(soapRequest)
-	uclSoapRequestLog.Print(err)
+	if err != nil {
+		uclSoapRequestLog.Print(err)
+	}
+
 	uclSoapRequestLog.Print(resp)
 }
 
