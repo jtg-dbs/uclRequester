@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/xml"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -15,7 +16,7 @@ import (
 )
 
 // UclSoapRequest creates the SOAP Request for the Ucl endpoint. Authentication is done by this function
-func UclSoapRequest(mrl string, clc string, gic string) {
+func UclSoapRequest(mrl string, clc string, gic string) (eul string) {
 	uclSoapRequestLog := log.New(os.Stdout, "UclSoapRequest: ", log.Ldate|log.Ltime|log.Lshortfile)
 	winVersion := getWinVersion(uclSoapRequestLog)
 	headers := map[string]string{
@@ -41,18 +42,30 @@ func UclSoapRequest(mrl string, clc string, gic string) {
 	url := getUrl(gic, uclSoapRequestLog) + "/licensing/License.asmx"
 	uclSoapRequestLog.Print(url)
 	soapRequest, err := http.NewRequest("POST", url, bytes.NewReader([]byte(bodyFilled))) // XML Document has to be in body
+
+	requestHeader := make(http.Header)
 	for key, value := range headers {
-		soapRequest.Header.Set(key, value)
+		requestHeader[key] = []string{value}
 	}
+	soapRequest.Header = requestHeader
 	if err != nil {
 		uclSoapRequestLog.Fatal(err)
 	}
 	resp, err := soapClient.Do(soapRequest)
 	if err != nil {
-		uclSoapRequestLog.Print(err)
+		uclSoapRequestLog.Fatal(err)
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != 200 {
+		uclSoapRequestLog.Println(resp.Status)
+		uclSoapRequestLog.Fatalln(resp.Body)
 	}
 
-	uclSoapRequestLog.Print(resp)
+	eul_byte, err := io.ReadAll(resp.Body)
+	if err != nil {
+		uclSoapRequestLog.Fatal(err)
+	}
+	return string(eul_byte)
 }
 
 func insertContent(mrl string, clc string, gic string, bodyEmpty string) (bodyFilled string) {

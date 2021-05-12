@@ -4,6 +4,7 @@ import (
 	"flag"
 	"log"
 	"os"
+	"uclRequester/createEul"
 	"uclRequester/createSoap"
 	"uclRequester/getGic"
 	"uclRequester/getPl"
@@ -15,9 +16,8 @@ func main() {
 	flag.Parse()
 	path := *pathPtr
 	mrl, clc := getPl.GetPublishingLicense(path)
-	gic := getGic.GetGicCert()
+	gic, gic_name := getGic.GetGicCert()
 	mainLog.Print("Soap")
-	createSoap.UclSoapRequest(mrl, clc, gic)
-	//ToDo: Kerberos oder NTLM Authentifizierung einbauen
-	//ToDO: UserAgent emulieren
+	eul := createSoap.UclSoapRequest(mrl, clc, gic)
+	createEul.CreateEulFile(eul, gic_name)
 }

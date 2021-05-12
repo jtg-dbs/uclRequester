@@ -13,7 +13,7 @@ import (
 )
 
 // GetGicCert searches for GIC files and returns the content if there is exactly one file
-func GetGicCert() (gic string) {
+func GetGicCert() (gic string, gic_name string) {
 	getGicLog := log.New(os.Stdout, "GetGicCertificate: ", log.Ldate|log.Ltime|log.Lshortfile)
 	homedir, _ := os.UserHomeDir()
 	dir := homedir + "/AppData/Local/Microsoft/MSIPC/GIC*"
@@ -32,7 +32,7 @@ func GetGicCert() (gic string) {
 	}
 	defer file.Close()
 
-	//transform Unicode16 Inpot from https://forum.golangbridge.org/t/reading-a-utf-16-text-file/1496
+	//transform Unicode16 Import from https://forum.golangbridge.org/t/reading-a-utf-16-text-file/1496
 	scanner := transform.NewReader(file, unicode.UTF16(unicode.LittleEndian, unicode.UseBOM).NewDecoder())
 	gicCertString, err := ioutil.ReadAll(scanner)
 	if err != nil {
@@ -47,5 +47,5 @@ func GetGicCert() (gic string) {
 		return -1
 	}
 	gicCertString = []byte(strings.Map(printOnly, string(gicCertString)))
-	return string(gicCertString)
+	return string(gicCertString), gicCerts[0]
 }

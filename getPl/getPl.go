@@ -5,7 +5,6 @@ import (
 	"os"
 	"strings"
 
-	"github.com/antchfx/xmlquery"
 	"github.com/richardlehane/mscfb"
 )
 
@@ -46,36 +45,35 @@ func GetPublishingLicense(path string) (MicrosoftRightsLabel string, ClienLicens
 
 //cleanXml In the PL there is are some type of text before the xml. Furhtermore the needed Elements get extracted
 func getMrlClc(xmlByte []byte, getPlLog *log.Logger) (MicrosoftRightsLabel string, ClienLicensorCertificate string) {
-	var mrl xmlquery.Node
-	var clc xmlquery.Node
+	var mrl string
+	var clc string
 	// get ride of the text before the xml
 	xmlStr := string(xmlByte)
 	index := strings.Index(xmlStr, "<")
-	xmlDoc := addRootElement(xmlStr[index:])
-	publishingLicense, err := xmlquery.Parse(strings.NewReader(xmlDoc))
-	if err != nil {
-		getPlLog.Fatal(err)
-	}
-	// extract Microsoft Right Label and Client Licensor Certificate from the Pl
-	xrmlArr := xmlquery.Find(publishingLicense, `//XrML`)
-	for _, node := range xrmlArr {
-		if xmlquery.FindOne(node, `//BODY[@type="Microsoft Rights Label"]`) != nil {
-			mrl = *node
-			getPlLog.Print("Microsoft Rights Label found")
+	plObj := strings.Split(xmlStr[index:], "<XrML")
+
+	for _, data := range plObj {
+		if strings.Contains(data, "Microsoft Rights Label") {
+			mrl = "<XrML" + data
+			getPlLog.Print("Fond: MRL")
 		}
-		if xmlquery.FindOne(node, `//BODY/DESCRIPTOR/OBJECT[@type="Client-Licensor-Certificate"]`) != nil {
-			clc = *node
-			getPlLog.Print("Client-Licensor-Certificate found")
+		if strings.Contains(data, "Client-Licensor-Certificate") {
+			clc = "<XrML" + data
+			getPlLog.Print("Found CLC")
 		}
+
 	}
 
-	return mrl.OutputXML(true), clc.OutputXML(true)
+	if clc == "" {
+		getPlLog.Print("No CLC found")
+	}
+	return mrl, clc
 }
 
 // add a root element in the PL for a well formed XML
-func addRootElement(xmlStr string) string {
-	index := strings.Index(xmlStr, "?>") + 2
-	wellFormedXml := xmlStr[:index] + "<root>" + xmlStr[index:] + "</root>"
+// func addRootElement(xmlStr string) string {
+// 	index := strings.Index(xmlStr, "?>") + 2
+// 	wellFormedXml := xmlStr[:index] + "<root>" + xmlStr[index:] + "</root>"
 
-	return wellFormedXml
-}
+// 	return wellFormedXml
+// }
